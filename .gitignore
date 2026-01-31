@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+venv/
+__pycache__/
+*.pyc
+
+# Env vars
+.env
+.env.local
+
+# Expo
+.expo/
+*.jks
+*.p12
+*.key
+*.keystore
+
+# System
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+
+# Build
+android/
+ios/
+web-build/
