@@ -4,15 +4,21 @@ import { COLORS } from '../styles/theme';
 import NpcBubble from '../components/NpcBubble';
 import { recordAPI } from '../services/api';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AdventureScreen = () => {
-    const [status, setStatus] = useState({
-        level: 1,
-        xp: 0,
-        xp_to_next_level: 1000,
-        map_progress: 0,
-        title: "初級冒險者"
+    const [dashboard, setDashboard] = useState({
+        rpg: {
+            level: 1,
+            xp: 0,
+            xp_to_next_level: 1000,
+            map_progress: 0,
+            title: "初級冒險者"
+        },
+        today_spend: 0,
+        today_carbon: 0
     });
+
     const [refreshing, setRefreshing] = useState(false);
     const [npcMessage, setNpcMessage] = useState("");
     const [npcVisible, setNpcVisible] = useState(false);
@@ -20,7 +26,7 @@ const AdventureScreen = () => {
     const fetchStatus = async () => {
         try {
             const res = await recordAPI.getStatus();
-            setStatus(res.data);
+            setDashboard(res.data);
         } catch (e) {
             console.log("Error fetching status", e);
         }
@@ -37,7 +43,7 @@ const AdventureScreen = () => {
     };
 
     // Calculate map visibility based on progress
-    const mapOpacity = 0.3 + (status.map_progress * 0.7);
+    const mapOpacity = 0.3 + (dashboard.rpg.map_progress * 0.7);
 
     return (
         <View style={styles.container}>
@@ -46,7 +52,7 @@ const AdventureScreen = () => {
                 <View style={styles.grid}>
                     {Array(16).fill(0).map((_, i) => (
                         <View key={i} style={styles.gridItem}>
-                            {status.map_progress > (i / 16) && (
+                            {dashboard.rpg.map_progress > (i / 16) && (
                                 <Ionicons
                                     name={i % 3 === 0 ? "leaf" : (i % 5 === 0 ? "home" : "trail-sign")}
                                     size={40}
@@ -63,37 +69,43 @@ const AdventureScreen = () => {
                 refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
             >
                 {/* Header / Stats */}
-                <View style={styles.header}>
+                <LinearGradient
+                    colors={['rgba(255,255,255,0.95)', 'rgba(255,255,255,0.85)']}
+                    style={styles.header}
+                >
                     <View style={styles.profileSection}>
                         <View style={styles.avatar}>
                             <Ionicons name="person" size={40} color={COLORS.white} />
                         </View>
                         <View>
-                            <Text style={styles.title}>{status.title}</Text>
-                            <Text style={styles.levelText}>等級 {status.level}</Text>
+                            <Text style={styles.title}>{dashboard.rpg.title}</Text>
+                            <Text style={styles.levelText}>等級 {dashboard.rpg.level}</Text>
                         </View>
                     </View>
 
                     <View style={styles.xpBarContainer}>
-                        <View style={[styles.xpBar, { width: `${(status.xp / status.xp_to_next_level) * 100}%` }]} />
-                        <Text style={styles.xpText}>{status.xp} / {status.xp_to_next_level} XP</Text>
+                        <View style={[styles.xpBar, { width: `${(dashboard.rpg.xp / dashboard.rpg.xp_to_next_level) * 100}%` }]} />
+                        <Text style={styles.xpText}>{dashboard.rpg.xp} / {dashboard.rpg.xp_to_next_level} XP</Text>
                     </View>
-                </View>
+                </LinearGradient>
 
-                {/* Dashboard Placeholder */}
-                <View style={styles.dashboard}>
+                {/* Dashboard */}
+                <LinearGradient
+                    colors={['rgba(255,255,255,0.95)', 'rgba(255,255,255,0.8)']}
+                    style={styles.dashboard}
+                >
                     <Text style={styles.dashTitle}>今日冒險統計</Text>
                     <View style={styles.statRow}>
                         <View style={styles.statItem}>
                             <Text style={styles.statLabel}>金幣消耗</Text>
-                            <Text style={styles.statValue}>1,250</Text>
+                            <Text style={styles.statValue}>{dashboard.today_spend.toLocaleString()}</Text>
                         </View>
                         <View style={styles.statItem}>
                             <Text style={styles.statLabel}>碳足跡</Text>
-                            <Text style={styles.statValue}>12.5 kg</Text>
+                            <Text style={styles.statValue}>{dashboard.today_carbon.toFixed(2)} kg</Text>
                         </View>
                     </View>
-                </View>
+                </LinearGradient>
             </ScrollView>
 
             <NpcBubble
@@ -136,12 +148,16 @@ const styles = StyleSheet.create({
         paddingTop: 60,
     },
     header: {
-        backgroundColor: 'rgba(255,255,255,0.9)',
         borderRadius: 20,
         padding: 20,
         marginBottom: 20,
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: COLORS.primary,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     profileSection: {
         flexDirection: 'row',
@@ -187,11 +203,15 @@ const styles = StyleSheet.create({
         color: '#333',
     },
     dashboard: {
-        backgroundColor: 'rgba(255,255,255,0.9)',
         borderRadius: 20,
         padding: 20,
-        borderWidth: 2,
+        borderWidth: 1,
         borderColor: COLORS.secondary,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     dashTitle: {
         fontSize: 18,
@@ -205,13 +225,15 @@ const styles = StyleSheet.create({
     },
     statItem: {
         alignItems: 'center',
+        flex: 1,
     },
     statLabel: {
         fontSize: 12,
         color: '#666',
+        marginBottom: 5,
     },
     statValue: {
-        fontSize: 20,
+        fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.primary,
     },

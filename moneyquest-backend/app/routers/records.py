@@ -50,9 +50,50 @@ async def list_records(x_user_id: str = Header(...)):
     records_ref = db.collection("records").where("user_id", "==", x_user_id).stream()
     return [Record(**doc.to_dict()) for doc in records_ref]
 
-@router.get("/rpg-status", response_model=RpgState)
+from app.models.dashboard import DashboardState
+from datetime import datetime, timedelta
+
+@router.get("/rpg-status", response_model=DashboardState)
 async def get_rpg_status(x_user_id: str = Header(...)):
+    # 1. Get RPG State
     rpg_doc = db.collection("rpg_states").document(x_user_id).get()
     if rpg_doc.exists:
-        return RpgState(**rpg_doc.to_dict())
-    return RpgState(user_id=x_user_id)
+        rpg_state = RpgState(**rpg_doc.to_dict())
+    else:
+        rpg_state = RpgState(user_id=x_user_id)
+        
+    # 2. Calculate Today's Stats
+    try:
+        now = datetime.now()
+        start_of_day = datetime(now.year, now.month, now.day)
+        
+        # Note: In a real app we'd query with date filter
+        # For mock/simple implementation, we stream recent and filter in python
+        records_ref = db.collection("records").where("user_id", "==", x_user_id).stream()
+        
+        today_spend = 0.0
+        today_carbon = 0.0
+        
+        for doc in records_ref:
+            d = doc.to_dict()
+            # Handle string vs datetime object from firestore depending on client
+            rec_date = d.get('date')
+            if isinstance(rec_date, str):
+                rec_date = datetime.fromisoformat(rec_date)
+            # Firestore timestamp behavior varies, assume iso string or datetime
+            
+            if rec_date and rec_date.replace(tzinfo=None) >= start_of_day:
+                if not d.get('is_income', False):
+                    today_spend += d.get('amount', 0)
+                today_carbon += d.get('carbon_kg', 0)
+                
+    except Exception as e:
+        print(f"Error calculating stats: {e}")
+        today_spend = 0.0
+        today_carbon = 0.0
+
+    return DashboardState(
+        rpg=rpg_state,
+        today_spend=today_spend,
+        today_carbon=today_carbon
+    )
