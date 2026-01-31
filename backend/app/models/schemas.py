@@ -64,7 +64,9 @@ class AnalysisResponse(BaseModel):
     prediction: str
     graph_data: List[dict]
 
+class RPGUpdate(BaseModel):
+    """Response model for RPG updates (leveling, exp gains)"""
     new_level: int
+    current_exp: int
     message: str
     npc_reaction: str  # URL or ID of the reaction asset
-

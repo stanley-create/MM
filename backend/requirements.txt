@@ -8,3 +8,6 @@ python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
 requests
+pytest
+pytest-asyncio
+httpx  # For FastAPI testing
