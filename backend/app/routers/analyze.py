@@ -27,26 +27,24 @@ PERSONAS = {
 }
 
 @router.post("/", response_model=AnalysisResponse)
-async def analyze_finances(request: AnalysisRequest):
-    # Select Persona (random or user pref)
-    persona_key = "elder" # Default to Elder for V2
-    persona = PERSONAS[persona_key]
+    # 3. RPG Advice via Gemini
+    # Summarize graph data for context
+    total_amount = sum(d['amount'] for d in graph_data)
+    summary_text = f"本週總支出: {total_amount}"
     
-    selected_advice = random.choice(persona["advice"])
-    
-    # Mock data for graph
-    graph_data = [
-        {"day": "Mon", "amount": random.randint(100, 500)},
-        {"day": "Tue", "amount": random.randint(100, 500)},
-        {"day": "Wed", "amount": random.randint(100, 500)},
-        {"day": "Thu", "amount": random.randint(100, 500)},
-        {"day": "Fri", "amount": random.randint(200, 800)},
-    ]
-    
-    full_message = f"{persona['intro']} {selected_advice}"
+    try:
+        from app.services.gemini import generate_rpg_advice
+        rpg_advice = await generate_rpg_advice(summary_text)
+        prediction_text = rpg_advice
+    except ImportError:
+        # Fallback to Persona logic if gemini service has issues
+        prediction_text = f"{persona['intro']} {selected_advice}"
+    except Exception as e:
+        print(f"Gemini error: {e}")
+        prediction_text = f"{persona['intro']} {selected_advice}"
     
     return AnalysisResponse(
         summary="Weekly Analysis",
-        prediction=full_message, 
+        prediction=prediction_text, 
         graph_data=graph_data
     )

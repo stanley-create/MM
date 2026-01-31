@@ -83,4 +83,13 @@ export const getQuests = async () => {
   }
 };
 
+export const getDashboardStatus = async () => {
+  try {
+    const response = await api.get("/records/rpg-status");
+    return response.data;
+  } catch (error) {
+    return null; // Handle quietly
+  }
+};
+
 export default api;

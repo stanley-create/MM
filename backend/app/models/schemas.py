@@ -23,6 +23,14 @@ class User(UserBase):
     guild_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
+class RpgState(BaseModel):
+    user_id: str
+    level: int = 1
+    xp: int = 0
+    xp_to_next_level: int = 1000
+    title: str = "Novice"
+    map_progress: float = 0.0
+
 class RecordCreate(BaseModel):
     amount: float
     category: str
