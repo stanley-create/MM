@@ -65,7 +65,7 @@ echo ""
 
 # Step 3: Run Frontend Optimization (from previous work)
 log_info "Step 3/4: Running Frontend Optimization..."
-echo"--------------------------------------------------"
+echo "--------------------------------------------------"
 cd "$PROJECT_ROOT/frontend"
 
 if [ -f "src/services/optimizeScript.js" ]; then

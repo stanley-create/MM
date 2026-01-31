@@ -11,6 +11,40 @@
 - 🌱 碳足跡追蹤
 - 👥 公會系統與社群功能
 
+## ⚡ 快速開始
+
+### 🚀 一鍵啟動伺服器 (推薦)
+
+```bash
+# 在專案根目錄執行
+python start_servers.py
+```
+
+此腳本會自動：
+- ✅ 建立並啟動後端 FastAPI 伺服器 (http://127.0.0.1:8000)
+- ✅ 建立並啟動前端 Expo 開發伺服器 (含 QR code)
+- ✅ 自動安裝缺少的依賴
+- ✅ 彩色輸出區分後端/前端日誌
+- ✅ 按 Ctrl+C 優雅停止所有伺服器
+
+詳細說明請見 [README_start.md](README_start.md)
+
+### 🔧 手動啟動 (進階)
+
+**後端**:
+```bash
+cd backend
+source venv/bin/activate
+uvicorn app.main:app --reload
+```
+
+**前端**:
+```bash
+cd frontend
+npm start
+```
+
+
 ## 🏗️ 技術架構
 
 ### 後端 (Backend)
