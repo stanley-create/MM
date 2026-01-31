@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+pydantic
+firebase-admin
+pandas
+scikit-learn
+python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
+requests
