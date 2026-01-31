@@ -1,79 +1,192 @@
-# MoneyQuest / 錢途冒險 (v5)
+# MoneyQuest Frontend - Optimization & Debugging Guide
 
-**透過 RPG 冒險，讓記帳變為自我成長的傳奇旅程。**
+## 🎯 Overview
+This document describes the frontend optimization and automated debugging enhancements for **MoneyQuest**, a cute RPG AI accounting app built with React Native.
 
-MoneyQuest 是一款結合了 **Gamification (遊戲化)** 與 **AI (人工智慧)** 的創新型記帳 App。它不只是記錄數字，而是將你的財務管理轉化為一場對抗「消費怪獸」的冒險，並整合了台灣本土化的支付習慣與碳足跡計算。
+## ✨ Optimizations Applied
 
----
+### 🔧 Performance Enhancements
+- **Memoization**: Used `React.useMemo` in `DashboardScreen` to prevent unnecessary re-renders
+- **useCallback**: Wrapped stage renderers in `RecordsScreen` with `useCallback` to optimize performance
+- **Lottie Animation Control**: Added speed control for Low Power Mode (reduces animation speed to 30%)
+- **Optimized Re-renders**: Prevented re-renders by memoizing computed values (EXP percentage, sanitized NPC messages)
 
-## 🚀 v5 版本特色 (整合 v3 + v4)
-- **🛡️ 冒險者公會 (Community)**：加入公會，與其他冒險者即時聊天，共同累積碳積分！
-- **📜 每日委託 (Quests)**：完成每日/每週任務（如：登入獎勵、低碳消費挑戰）賺取額外 EXP。
-- **🔐 冒險者證 (Auth)**：完整的登入/註冊流程，保護你的冒險進度。
-- **🤖 AI 賢者 (Gemini Integration)**：內建針對台灣職場人的 AI 理財賢者，提供幽默且接地氣的財務預言。
-- **✨ 介面升級**：全新設計的漸層 UI 與動態儀表板，提供即時的消費與碳足跡追蹤。
+### 🔒 Security Improvements
+- **JWT Token Integration**: Added request interceptor to attach JWT tokens from AsyncStorage to all API calls
+- **Input Validation**: Created Pydantic-like validation utilities for:
+  - Amount validation (numeric, range checks)
+  - Description validation (length limits)
+  - Category validation
+- **XSS Prevention**: Implemented `sanitizeInput()` to prevent cross-site scripting in NPC messages and user inputs
+- **Error Handling**: Added response interceptor for standardized error logging
 
-## ⚡ 快速開始 (使用自動化腳本)
+### 🎨 UI/UX Refinements
+- **Q-Version Aesthetic**: Soft color palette already in place (#90EE90 light green, #ADD8E6 light blue)
+- **User Feedback**: Replaced alerts with Toast notifications for better UX on Android
+- **Smooth Transitions**: Enhanced stage transitions in RecordsScreen
+- **Validation Feedback**: Immediate user feedback for invalid inputs with Chinese messages
 
-### 🚀 一鍵啟動伺服器 (推薦)
-```bash
-# 在專案根目錄執行
-python start_servers.py
+### 🧪 Testing
+- **Jest Configuration**: Added jest-expo preset with proper transformIgnorePatterns
+- **Unit Tests**:
+  - `validation.test.js`: Comprehensive tests for all validation utilities
+  - `RecordsScreen.test.js`: Component tests for rendering, validation, navigation, and API calls
+- **Coverage**: Tests include boundary cases (empty inputs, invalid data, API errors)
+
+## 📦 New Dependencies
+
+```json
+{
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/react-native": "^12.4.3",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
+    "jest-expo": "^51.0.4",
+    "prettier": "^3.2.5",
+    "simple-git": "^3.22.0"
+  }
+}
 ```
-此腳本會自動：
-- ✅ 建立並啟動後端 FastAPI 伺服器 (http://127.0.0.1:8000)
-- ✅ 建立並啟動前端 Expo 開發伺服器 (含 QR code)
-- ✅ 自動安裝缺少的依賴
 
-### 🔧 手動啟動
+## 🚀 Usage
 
-**後端 (Backend)**:
-```bash
-cd backend
-python -m venv venv
-.\venv\Scripts\Activate  # Windows
-pip install -r requirements.txt
-
-# 設定 Gemini API Key (必要)
-# 在 backend/.env 檔案中設定：GEMINI_API_KEY=你的金鑰
-
-uvicorn app.main:app --reload
-```
-
-**前端 (Frontend)**:
+### Install Dependencies
 ```bash
 cd frontend
-npm install --legacy-peer-deps
-npm start
+npm install
 ```
 
----
-
-## 🏗️ 技術架構 & 目錄結構
-
-```
-MoneyQuest/
-├── backend/              # FastAPI 後端 (v4 架構)
-│   ├── app/
-│   │   ├── routers/     # API endpoints (records, analyze, community)
-│   │   ├── services/    # Business logic (Gemini, Gamification)
-│   │   └── models/      # Pydantic schemas
-│   └── tests/           # Pytest tests
-├── frontend/             # React Native 前端 (v4 架構)
-│   ├── src/
-│   │   ├── screens/     # Dashboard, Quests, Community
-│   │   ├── services/    # API & validation
-│   │   └── context/     # AuthContext
-├── scripts/             # 自動化腳本 (run_all.sh, etc)
-└── moneyquest-backend/  # (Legacy - 待移除)
-└── moneyquest-frontend/ # (Legacy - 待移除)
+### Run Tests
+```bash
+npm test
 ```
 
-## 🔐 安全性與優化
-- ✅ JWT 認證整合
-- ✅ 輸入驗證 (Pydantic)
-- ✅ Gemini AI 整合 (冒險建議)
-- ✅ Lottie 動畫與漸層 UI
+### Run Optimization Script
+The optimization script automatically:
+1. Formats code with Prettier
+2. Runs Jest tests
+3. Commits changes to Git
+4. Pushes to remote repository
 
----
-*Made with ❤️ by Agent Antigravity & MoneyQuest Team*
+```bash
+npm run optimize
+```
+
+Or directly:
+```bash
+node src/services/optimizeScript.js
+```
+
+### Manual Git Operations
+If the automatic Git push fails, use these commands:
+```bash
+git add .
+git commit -m "Auto-debug, optimize and perfect frontend code"
+git push
+```
+
+## 📁 File Structure
+
+```
+frontend/
+├── src/
+│   ├── __tests__/              # Jest tests
+│   │   ├── validation.test.js
+│   │   └── RecordsScreen.test.js
+│   ├── screens/
+│   │   ├── DashboardScreen.js  # Optimized with useMemo, Lottie speed control
+│   │   └── RecordsScreen.js    # Enhanced with validation, useCallback
+│   ├── services/
+│   │   ├── api.js              # JWT interceptors, error handling
+│   │   ├── validation.js       # Input validation utilities
+│   │   └── optimizeScript.js   # Automated optimization & Git script
+│   └── constants/
+│       └── theme.js            # Q-version color palette
+├── package.json
+└── README.md                   # This file
+```
+
+## 🎮 Key Features
+
+### DashboardScreen
+- **Interactive Map**: Lottie animation with dynamic speed control
+- **NPC Dialog**: Sanitized messages to prevent XSS
+- **Performance**: Memoized EXP percentage calculation
+- **Low Power Mode**: Reduces animation speed when enabled
+
+### RecordsScreen
+- **Input Validation**: Real-time validation for amount and description
+- **Toast Notifications**: User-friendly error messages in Chinese
+- **Stage Management**: Smooth transitions between Input and Preview stages
+- **Security**: Sanitized description before API submission
+
+### API Layer
+- **JWT Authentication**: Automatic token attachment to requests
+- **Error Interceptor**: Standardized error logging and handling
+- **Timeout Management**: 5-second timeout for all requests
+
+## 🧪 Testing Guide
+
+### Run All Tests
+```bash
+npm test
+```
+
+### Run Specific Test Suite
+```bash
+npm test validation.test.js
+npm test RecordsScreen.test.js
+```
+
+### Watch Mode (for development)
+```bash
+npm test -- --watch
+```
+
+## 🔄 Git Workflow
+
+The `optimizeScript.js` automates:
+1. **Code Quality**: Runs Prettier and ESLint (if configured)
+2. **Testing**: Ensures all tests pass before committing
+3. **Git Operations**: Stages, commits, and pushes changes
+4. **Fallback**: Provides manual commands if automated push fails
+
+## 🌟 Best Practices Implemented
+
+1. **Separation of Concerns**: Validation logic separated into `validation.js`
+2. **Reusability**: Validation and sanitization utilities are reusable across components
+3. **Error Handling**: Comprehensive try-catch blocks with user-friendly messages
+4. **Performance**: Minimized re-renders with memoization
+5. **Security**: Input sanitization and JWT token management
+6. **Testing**: High test coverage for critical paths
+
+## 🎨 Q-Version Design Philosophy
+
+- **Soft Colors**: Light green (#90EE90), light blue (#ADD8E6)
+- **Rounded Elements**: Border radius of 20px for cards and buttons
+- **Friendly Tone**: Chinese messages with warm, encouraging language
+- **Smooth Animations**: Lottie animations with performance optimization
+- **Cute Icons**: NPC sprites and emoji for visual appeal
+
+## 📝 Future Improvements
+
+- [ ] Add E2E tests with Detox
+- [ ] Implement offline mode with local storage synchronization
+- [ ] Add more comprehensive ESLint configuration
+- [ ] Create snapshot tests for UI components
+- [ ] Add performance monitoring (React Native Performance)
+
+## 🤝 Contributing
+
+When making changes:
+1. Write tests for new features
+2. Run `npm test` before committing
+3. Use `npm run optimize` to auto-format and commit
+4. Follow the Q-version design aesthetic
+
+## 📄 License
+
+This project is part of the MoneyQuest application.

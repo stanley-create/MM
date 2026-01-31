@@ -1,34 +1,41 @@
-# General
-.DS_Store
-.env
-.env.local
-*.log
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# Python / FastAPI
-__pycache__/
-*.py[cod]
-venv/
-backend/venv/
-moneyquest-backend/venv/
-
-# Node / React Native
+# dependencies
 node_modules/
+
+# Expo
 .expo/
 dist/
 web-build/
+expo-env.d.ts
 
-# Mobile Build
+# Native
+.kotlin/
+*.orig.*
 *.jks
+*.p8
 *.p12
 *.key
-*.keystore
-android/
-ios/
+*.mobileprovision
 
-# IDE
-.idea/
-.vscode/
+# Metro
+.metro-health-check*
 
-# Firebase
-google-services.json
-GoogleService-Info.plist
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
