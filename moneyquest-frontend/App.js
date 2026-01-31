@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import AdventureScreen from './src/screens/AdventureScreen';
 import { AnalysisScreen, TaskScreen, GuildScreen, SettingsScreen } from './src/screens/Screens';
+import AuthScreen from './src/screens/AuthScreen';
+import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { COLORS } from './src/styles/theme';
 import { Ionicons } from '@expo/vector-icons';
 import { View, TouchableOpacity, StyleSheet, Alert } from 'react-native';
@@ -10,6 +13,7 @@ import RecordModal from './src/components/RecordModal';
 import { recordAPI } from './src/services/api';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const RecordButton = ({ onPress }) => (
   <TouchableOpacity
@@ -20,7 +24,7 @@ const RecordButton = ({ onPress }) => (
   </TouchableOpacity>
 );
 
-export default function App() {
+const MainTabs = () => {
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleSaveRecord = async (data) => {
@@ -33,7 +37,7 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
+    <>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -71,7 +75,31 @@ export default function App() {
         onClose={() => setModalVisible(false)}
         onSave={handleSaveRecord}
       />
+    </>
+  );
+};
+
+const AppNavigator = () => {
+  const { user } = useAuth();
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {user ? (
+          <Stack.Screen name="Main" component={MainTabs} />
+        ) : (
+          <Stack.Screen name="Auth" component={AuthScreen} />
+        )}
+      </Stack.Navigator>
     </NavigationContainer>
+  );
+};
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppNavigator />
+    </AuthProvider>
   );
 }
 

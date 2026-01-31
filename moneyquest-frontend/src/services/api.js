@@ -20,4 +20,18 @@ export const analysisAPI = {
     getAnalysis: () => api.post('/analyze/'),
 };
 
+export const communityAPI = {
+    join: (guildId) => api.post(`/community/join/${guildId}`),
+    list: () => api.get('/community/'),
+};
+
+export const getQuests = async () => {
+    // Mock response for now if backend not ready
+    return [
+        { id: '1', title: 'Daily Login', description: 'Log in to the app', progress: 1, target: 1, reward_exp: 10 },
+        { id: '2', title: 'Low Carbon', description: 'Spend < 100 on transport', progress: 50, target: 100, reward_exp: 50 },
+    ];
+    // return api.get('/rpg/quests').then(res => res.data);
+}
+
 export default api;

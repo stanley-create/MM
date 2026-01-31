@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routers import records, analysis
+from app.routers import records, analysis, community
 import uvicorn
 
 app = FastAPI(title="MoneyQuest AI Backend")
@@ -17,6 +17,7 @@ app.add_middleware(
 # Include Routers
 app.include_router(records.router, prefix="/records", tags=["Records"])
 app.include_router(analysis.router, prefix="/analyze", tags=["Analysis"])
+app.include_router(community.router, prefix="/community", tags=["Community"])
 
 @app.get("/")
 async def root():

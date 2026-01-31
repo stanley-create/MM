@@ -43,3 +43,10 @@ class AnalysisReport(BaseModel):
     carbon_analysis: str
     category_breakdown: dict
     prediction_next_month: float
+
+class Guild(BaseModel):
+    id: str
+    name: str
+    description: str
+    members: List[str]
+    total_carbon_saved: float = 0.0
