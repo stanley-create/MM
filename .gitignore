@@ -1,29 +1,34 @@
-# Dependencies
-node_modules/
-venv/
-__pycache__/
-*.pyc
-
-# Env vars
+# General
+.DS_Store
 .env
 .env.local
+*.log
 
-# Expo
+# Python / FastAPI
+__pycache__/
+*.py[cod]
+venv/
+backend/venv/
+moneyquest-backend/venv/
+
+# Node / React Native
+node_modules/
 .expo/
+dist/
+web-build/
+
+# Mobile Build
 *.jks
 *.p12
 *.key
 *.keystore
-
-# System
-.DS_Store
-Thumbs.db
+android/
+ios/
 
 # IDE
 .idea/
 .vscode/
 
-# Build
-android/
-ios/
-web-build/
+# Firebase
+google-services.json
+GoogleService-Info.plist
